@@ -660,6 +660,7 @@ public class PulsarService implements AutoCloseable, ShutdownService {
     /**
      * Start the pulsar service instance.
      */
+    // wxc  2022-11-12 14:35:03  这样250来行的代码， 怎么单测? 不用太追求单测的覆盖率， 关键路径覆盖即可。
     public void start() throws PulsarServerException {
         LOG.info("Starting Pulsar Broker service; version: '{}'",
                 (brokerVersion != null ? brokerVersion : "unknown"));

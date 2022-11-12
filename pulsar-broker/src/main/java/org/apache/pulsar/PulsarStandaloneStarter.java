@@ -35,7 +35,8 @@ import org.apache.pulsar.common.util.CmdGenerateDocs;
 public class PulsarStandaloneStarter extends PulsarStandalone {
 
     private static final String PULSAR_CONFIG_FILE = "pulsar.config.file";
-
+    
+    // wxc  2022-11-12 14:16:53   这个框架是用来解决什么问题？ 从名字jcommander看， 应该是Java程序参数相关的。
     @Parameter(names = {"-g", "--generate-docs"}, description = "Generate docs")
     private boolean generateDocs = false;
 
@@ -43,6 +44,7 @@ public class PulsarStandaloneStarter extends PulsarStandalone {
 
         JCommander jcommander = new JCommander();
         try {
+            // wxc  2022-11-12 14:19:09  父类中有17个Parameter定义的参数。 借助这些参数定义，这里再addObject才能了解析入参和打印参数含义的妙用。
             jcommander.addObject(this);
             jcommander.parse(args);
             if (this.isHelp()) {
@@ -59,18 +61,21 @@ public class PulsarStandaloneStarter extends PulsarStandalone {
                 this.setConfigFile(configFile);
             }
             if (this.generateDocs) {
+                // wxc  2022-11-12 14:21:06  这里生成的文档是怎样的？
                 CmdGenerateDocs cmd = new CmdGenerateDocs("pulsar");
                 cmd.addCommand("standalone", this);
                 cmd.run(null);
                 System.exit(0);
             }
-
+    
+            // wxc  2022-11-12 14:21:42  是说不能只启动Broker？
             if (this.isNoBroker() && this.isOnlyBroker()) {
                 log.error("Only one option is allowed between '--no-broker' and '--only-broker'");
                 jcommander.usage();
                 return;
             }
         } catch (Exception e) {
+            // wxc  2022-11-12 14:22:22  如有异常情况下， 打印下使用说明。
             jcommander.usage();
             log.error(e.getMessage());
             System.exit(1);
@@ -97,6 +102,7 @@ public class PulsarStandaloneStarter extends PulsarStandalone {
             if (StringUtils.isNotBlank(config.getMetadataStoreUrl())) {
                 String[] metadataStoreUrl = config.getMetadataStoreUrl().split(",")[0].split(":");
                 if (metadataStoreUrl.length == 2) {
+                    // wxc  2022-11-12 14:24:19  这里是说使用的Zk么？ zk应该不是ZooKeeper吧？
                     this.setZkPort(Integer.parseInt(metadataStoreUrl[1]));
                 } else if ((metadataStoreUrl.length == 3)){
                     String zkPort = metadataStoreUrl[2];
@@ -125,6 +131,7 @@ public class PulsarStandaloneStarter extends PulsarStandalone {
             } catch (Exception e) {
                 log.error("Shutdown failed: {}", e.getMessage(), e);
             } finally {
+                // wxc  2022-11-12 14:25:15  再单独提取一个LogManager的作用是？
                 LogManager.shutdown();
             }
         }));
@@ -136,6 +143,7 @@ public class PulsarStandaloneStarter extends PulsarStandalone {
 
     public static void main(String[] args) throws Exception {
         // Start standalone
+        // wxc  2022-11-12 14:26:06  这个初始化工作挺好。
         PulsarStandaloneStarter standalone = new PulsarStandaloneStarter(args);
         try {
             standalone.start();

@@ -55,7 +55,8 @@ import org.apache.pulsar.zookeeper.LocalBookkeeperEnsemble;
 public class PulsarStandalone implements AutoCloseable {
 
     private static final String PULSAR_STANDALONE_USE_ZOOKEEPER = "PULSAR_STANDALONE_USE_ZOOKEEPER";
-
+    
+    // wxc  2022-11-12 14:29:28  消息中最常说的是Broker，这里类名上叫Service。
     PulsarService broker;
 
     // This is used in compatibility mode
@@ -66,6 +67,7 @@ public class PulsarStandalone implements AutoCloseable {
     MetadataStoreExtended metadataStore;
 
     ServiceConfiguration config;
+    // wxc  2022-11-12 14:31:14 WorkerService怎么理解？
     WorkerService fnWorkerService;
     WorkerConfig workerConfig;
 
@@ -300,6 +302,7 @@ public class PulsarStandalone implements AutoCloseable {
             if (usingNewDefaultsPIP117) {
                 startBookieWithMetadataStore();
             } else {
+                // wxc  2022-11-12 14:27:00  还真看到了Zookeeper
                 startBookieWithZookeeper();
             }
         }
@@ -335,6 +338,7 @@ public class PulsarStandalone implements AutoCloseable {
         }
 
         config.setRunningStandalone(true);
+        // wxc  2022-11-12 14:28:06  100来行的代码！不要太追求设计&代码质量。
 
         if (!usingNewDefaultsPIP117) {
             final String metadataStoreUrl =
